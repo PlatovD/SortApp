@@ -4,9 +4,8 @@ import javafx.animation.AnimationTimer;
 import javafx.scene.control.Label;
 import javafx.stage.FileChooser;
 import ru.vsu.cs.dplatov.vvp.task3.gnomesortapp.GUI.model.FullSortData;
-import ru.vsu.cs.dplatov.vvp.task3.gnomesortapp.GUI.model.factory.GnomeSortFactory;
-import ru.vsu.cs.dplatov.vvp.task3.gnomesortapp.GUI.model.factory.QuickSortFactory;
 import ru.vsu.cs.dplatov.vvp.task3.gnomesortapp.GUI.model.factory.SortFactory;
+import ru.vsu.cs.dplatov.vvp.task3.gnomesortapp.GUI.utils.DataType;
 import ru.vsu.cs.dplatov.vvp.task3.gnomesortapp.GUI.utils.SortType;
 import ru.vsu.cs.dplatov.vvp.task3.gnomesortapp.GUI.view.View;
 import ru.vsu.cs.dplatov.vvp.task3.gnomesortapp.task.Sort;
@@ -15,6 +14,7 @@ import java.io.*;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.function.Function;
 
 public class Controller {
     private final View view;
@@ -76,14 +76,23 @@ public class Controller {
     }
 
     private void prepareToView() {
-        isActive = true;
-        view.getArrayView().changeEditable();
-//        view.getChoiceDataType().
-        Sort<Integer> sort = createSort(view.getChoiceSortType().getValue()).createSort();
-        fullSortData = sort.sortWithData(view.getArrayView().parseInput(), Comparator.naturalOrder());
-        view.getArrayView().reinitColoredFromArray(fullSortData.states.get(currentIndex).arr, fullSortData.states.get(currentIndex).importantIndexes);
+        try {
+            isActive = true;
+            view.getArrayView().changeEditable();
 
-        fillInfo();
+            DataType dataType = view.getChoiceDataType().getValue();
+            SortType sortType = view.getChoiceSortType().getValue();
+
+            Sort<Object> sort = SortFactory.createSort(sortType);
+            Object[] arr = Arrays.stream(view.getArrayView().parseInput()).map(dataType.getPayload().converter).toArray();
+
+            fullSortData = sort.sortWithData(arr, dataType.getPayload().comparator);
+            view.getArrayView().reinitColoredFromArray(fullSortData.states.get(currentIndex).arr, fullSortData.states.get(currentIndex).importantIndexes);
+
+            fillInfo();
+        } catch (ClassCastException e) {
+            throw new ClassCastException("Invalid datatype in array " + e.getMessage());
+        }
     }
 
     private void deleteElButtonHandler() {
@@ -146,18 +155,6 @@ public class Controller {
         view.getInfo().getChildren().clear();
         view.getTimings().getChildren().clear();
 
-    }
-
-    private static SortFactory<Integer> createSort(SortType sortType) {
-        switch (sortType) {
-            case QUICKSORT -> {
-                return new QuickSortFactory<>();
-            }
-            case GNOMESORT -> {
-                return new GnomeSortFactory<>();
-            }
-        }
-        throw new RuntimeException("Sort is unnoun");
     }
 
     private void fillInfo() {

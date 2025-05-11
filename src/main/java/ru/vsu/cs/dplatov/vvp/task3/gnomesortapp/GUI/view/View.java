@@ -100,7 +100,9 @@ public class View {
         spacer5.setMinWidth(40);
         Region spacer7 = new Region();
         spacer7.setMinWidth(30);
-        toolBarMain = new ToolBar(start, spacer1, prev, spacer2, next, spacer3, stop, spacer6, startAnimated, spacer7, timeAnimationSpinner, spacer4, choiceSortType, spacer5, addFromFile);
+        Region spacer8 = new Region();
+        spacer8.setMinWidth(30);
+        toolBarMain = new ToolBar(start, spacer1, prev, spacer2, next, spacer3, stop, spacer6, startAnimated, spacer7, timeAnimationSpinner, spacer4, choiceSortType, spacer8, choiceDataType, spacer5, addFromFile);
     }
 
     private void prepareToolbarArray() {

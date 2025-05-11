@@ -1,21 +1,28 @@
 package ru.vsu.cs.dplatov.vvp.task3.gnomesortapp.GUI.utils;
 
-import java.util.Comparator;
-
 public enum DataType {
-    INTEGER("Integer"),
-    DOUBLE("Double"),
-    STRING("String"),
-    BOOLEAN("Boolean");
+    INTEGER("Integer", new DataTypePayload<Integer>(Integer::parseInt, Integer::compareTo)),
+
+    DOUBLE("Double", new DataTypePayload<Double>(Double::parseDouble, Double::compareTo)),
+
+    STRING("String", new DataTypePayload<String>(String::toString, String::compareTo)),
+
+    BOOLEAN("Boolean", new DataTypePayload<Boolean>(Boolean::parseBoolean, Boolean::compareTo));
 
     private final String name;
+    private final DataTypePayload<?> payload;
 
-    DataType(String name) {
+    DataType(String name, DataTypePayload<?> payload) {
         this.name = name;
+        this.payload = payload;
     }
 
     @Override
     public String toString() {
         return name;
+    }
+
+    public <T> DataTypePayload<T> getPayload() {
+        return (DataTypePayload<T>) payload;
     }
 }

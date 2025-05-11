@@ -66,15 +66,15 @@ public class ArrayView extends HBox {
     }
 
 
-    public Integer[] parseInput() {
-        Integer[] arr = new Integer[getChildren().size()];
+    public String[] parseInput() {
+        String[] arr = new String[getChildren().size()];
         for (int i = 0; i < arr.length; i++) {
             Node node = getChildren().get(i);
             if (node instanceof TextField textField) {
                 try {
-                    arr[i] = Integer.parseInt(textField.getText().strip());
+                    arr[i] = textField.getText().strip();
                 } catch (NumberFormatException e) {
-                    arr[i] = 0;
+                    arr[i] = "";
                 }
 
             }
